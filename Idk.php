@@ -33,7 +33,7 @@
    /*
    ** halve the value of $num
    */
-   $num = 100;
+   $num = 50;
    echo "num is now: $num<BR>";
    $num = $num / 2;
    echo "num is now: $num<BR>";

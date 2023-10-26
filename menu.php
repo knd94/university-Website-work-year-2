@@ -1,5 +1,5 @@
 <?php
-table border=1>
+<table border=1>
  <tr>
  <td><a href="page1.php">Page 1</a></td>
  <td><a href="page2.php">Page 2</a></td>

@@ -2,7 +2,7 @@
 $today = date("l");
 echo "Current day of the week: $today";
 
-if ($today == "Monday") { 
+if ($today == "Monday" && "Wednesday" && "Thursday") { 
     // Go to University 
     echo "<p>Go to university.</p>";
 } else { 

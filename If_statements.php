@@ -1,11 +1,12 @@
 <?php
-$today = "Tuesday";
+$today = date("l");
+echo "Current day of the week: $today";
 
 if ($today == "Monday") { 
     // Go to University 
-    print "Go to university.";
+    echo "<p>Go to university.</p>";
 } else { 
     // Stay in bed
-    print "Stay in bed";
+    echo "<p>Stay in bed</p>";
 }
 ?>

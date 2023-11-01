@@ -5,7 +5,7 @@ include("menu.php");
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Page1</title>
+    <title>Page2</title>
 </head>
 <body>
     <p>this is the content of page 2</p>

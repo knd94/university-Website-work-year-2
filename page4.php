@@ -2,6 +2,10 @@
  <head>
  <title>Dynamic CSS</title>
  <?php
+ include("menu.php");
+ ?>
+ 
+ <?php
  if (isset($_POST["style"])) {
  $thisStyle=$_POST["style"];
  } else {

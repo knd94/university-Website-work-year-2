@@ -35,21 +35,32 @@ include('db.php');
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO users (username, password, hashed_password) VALUES ('$username', '$password', '$hashed_password')";
+    // Check if the username already exists
+    $check_sql = "SELECT * FROM users WHERE username = '$username'";
+    $check_result = $conn->query($check_sql);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "Registration successful!";
-
-        // Check if "Remember Me" is checked
-        if (isset($_POST['remember_me']) && $_POST['remember_me'] == 'on') {
-            // Set a persistent cookie for "Remember Me"
-            setcookie('remembered_user', $username, time() + (30 * 24 * 60 * 60), '/');
-        }
+    if ($check_result->num_rows > 0) {
+        // Username already exists, display an error message
+        echo "Username already exists. Please choose a different one.";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        // Proceed with registration
+        $password = mysqli_real_escape_string($conn, $_POST['password']);
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $insert_sql = "INSERT INTO users (username, password, hashed_password) VALUES ('$username', '$password', '$hashed_password')";
+
+        if ($conn->query($insert_sql) === TRUE) {
+            echo "Registration successful!";
+
+            // Check if "Remember Me" is checked
+            if (isset($_POST['remember_me']) && $_POST['remember_me'] == 'on') {
+                // Set a persistent cookie for "Remember Me"
+                setcookie('remembered_user', $username, time() + (30 * 24 * 60 * 60), '/');
+            }
+        } else {
+            echo "Error: " . $insert_sql . "<br>" . $conn->error;
+        }
     }
 }
 

@@ -12,9 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
 
-        // Debugging: Print hashed password from the database
-        echo "Stored hashed password: " . $row['password'] . "<br>";
-
         // Check if the stored password needs rehashing
         if (password_needs_rehash($row['password'], PASSWORD_DEFAULT)) {
             // Rehash the password and update it in the database
@@ -22,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $update_sql = "UPDATE users SET password = '$new_hashed_password' WHERE username = '$username'";
             $conn->query($update_sql);
 
-            echo "Password has been rehashed and updated.<br>";
+            echo "Password has been rehashed and updated." . "<br>";
         }
 
         if (password_verify($password, $row['password'])) {
@@ -31,8 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit; // Make sure to exit after redirect
         } else {
             echo "Entered password: " . $password . "<br>";
-            echo "Hashed password: " . password_hash($password, PASSWORD_DEFAULT) . "<br>";
-            echo "Incorrect password";
+            echo "Incorrect password. Please try again.";
         }
     } else {
         echo "User not found";

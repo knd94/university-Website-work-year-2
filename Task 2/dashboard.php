@@ -1,7 +1,12 @@
 <?php
 // Start the session
 session_start();
+
+// Include the database connection
 include('db.php');
+
+// Include database functions
+include('db_functions.php');
 
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {
@@ -15,7 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_user'])) {
     include('delete_user.php');
 }
 
-// Render the HTML using a template engine (e.g., Twig)
+// Check if the profile picture form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload_picture'])) {
+    // Include the upload_picture.php script
+    include('upload_picture.php');
+}
+
+// Fetch user profile picture from the database
+$profilePicture = getUserProfilePicture($conn, $_SESSION['username']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,11 +41,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_user'])) {
     <h2>Welcome, <?php echo $_SESSION['username']; ?>!</h2>
 
     <!-- Display user information -->
+    <?php
+    if (!empty($profilePicture)) {
+        echo '<img src="' . $profilePicture . '" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">';
+    }
+    ?>
+    
     <!-- Display a list of upcoming events -->
 
     <!-- Delete User Form -->
     <form method="post" action="">
         <input type="submit" name="delete_user" value="Delete My Account">
+    </form>
+
+    <!-- Profile Picture Form -->
+    <form method="post" action="" enctype="multipart/form-data">
+        <label for="profile_picture">Profile Picture:</label>
+        <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+        <input type="submit" name="upload_picture" value="Upload Picture">
     </form>
 
     <!-- Add more content and features as needed -->

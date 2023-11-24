@@ -8,7 +8,32 @@ if (isset($_SESSION['username'])) {
     exit;
 }
 
+require_once 'vendor/autoload.php'; // Autoload the Composer dependencies
 include('db.php');
+
+$loader = new \Twig\Loader\ArrayLoader([
+    'login' => '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Login</title>
+        </head>
+        <body>
+            <h2>Login</h2>
+            <form method="post" action="login_twig_cookies.php">
+                Username: <input type="text" name="username" required><br>
+                Password: <input type="password" name="password" required><br>
+                <label for="rememberMe">Remember me</label>
+                <input type="checkbox" name="rememberMe" id="rememberMe"><br>
+                <input type="submit" value="Login">
+            </form>
+            <a href="registration_twig_cookies.php"> Not a user? Register! </a>
+        </body>
+        </html>
+    ',
+]);
+
+$twig = new \Twig\Environment($loader);
 
 // Handle login logic
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -27,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Check if "Remember me" is checked
             if (isset($_POST['rememberMe']) && $_POST['rememberMe'] == 'on') {
-                // Set a cookie to remember the user for 30 days 
+                // Set a cookie to remember the user for 30 days
                 setcookie('rememberedUser', $username, time() + 30 * 24 * 60 * 60);
             }
 
@@ -43,21 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $conn->close();
-?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <h2>Login</h2>
-    <form method="post" action="login_twig_cookies.php">
-        Username: <input type="text" name="username" required><br>
-        Password: <input type="password" name="password" required><br>
-        <label for="rememberMe">Remember me</label>
-        <input type="checkbox" name="rememberMe" id="rememberMe"><br>
-        <input type="submit" value="Login">
-    </form>
-</body>
-</html>
+// Render the Twig template
+echo $twig->render('login');
+?>

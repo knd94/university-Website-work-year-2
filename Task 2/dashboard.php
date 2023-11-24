@@ -40,13 +40,17 @@ $profilePicture = getUserProfilePicture($conn, $_SESSION['username']);
 <body>
     <h2>Welcome, <?php echo $_SESSION['username']; ?>!</h2>
 
-    <!-- Display user information -->
-    <?php
-    if (!empty($profilePicture)) {
-        echo '<img src="' . $profilePicture . '" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">';
-    }
-    ?>
-    
+    <!-- Display user profile picture -->
+<?php
+if (!empty($profilePicture)) {
+    echo '<img src="' . $profilePicture . '" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">';
+} else {
+    echo '<p>No profile picture found for user ' . $_SESSION['username'] . '</p>';
+
+}
+?>
+
+
     <!-- Display a list of upcoming events -->
 
     <!-- Delete User Form -->

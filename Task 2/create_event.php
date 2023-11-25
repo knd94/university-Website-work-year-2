@@ -8,7 +8,7 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Set username from session
+// Set username and user_id from session
 $username = $_SESSION['username'];
 
 // Fetch user_id from users table based on the username
@@ -22,7 +22,7 @@ $stmt->fetch();
 
 $stmt->close();
 
-/// Check if the create event form is submitted
+// Check if the create event form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_event'])) {
     // Validate and process the form data
     $title = mysqli_real_escape_string($conn, $_POST['title']);
@@ -39,28 +39,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_event'])) {
     }
 
     // Insert event data into the database
-$insertSql = "INSERT INTO events (username, title, description, event_date, image_path) 
-              VALUES (?, ?, ?, ?, ?)";
+    $insertSql = "INSERT INTO events (username, user_id, title, description, event_date, image_path) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
 
-// Use prepared statement to prevent SQL injection
-$stmt = $conn->prepare($insertSql);
-$stmt->bind_param("sssss", $username, $title, $description, $event_date, $image_path);
+    // Use prepared statement to prevent SQL injection
+    $stmt = $conn->prepare($insertSql);
+    $stmt->bind_param("sissss", $username, $user_id, $title, $description, $event_date, $image_path);
 
-if ($stmt->execute()) {
-    // Event created successfully, redirect to index.php
-    header("Location: index.php");
-    exit();
-} else {
-    echo "Error creating event: " . $stmt->error;
-}
-// Close the statement
-$stmt->close();
+    if ($stmt->execute()) {
+        // Event created successfully, redirect to index.php
+        header("Location: events.php");
+        exit();
+    } else {
+        echo "Error creating event: " . $stmt->error;
+    }
+
+    // Close the statement
+    $stmt->close();
 }
 
 // Close the database connection
 $conn->close();
-?>
-;
 ?>
 <!-- Create Event Form HTML -->
 <!DOCTYPE html>

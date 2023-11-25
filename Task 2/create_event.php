@@ -27,10 +27,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_event'])) {
     // Validate and process the form data
     $title = mysqli_real_escape_string($conn, $_POST['title']);
     $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $event_date = $_POST['event_date'];  // Assuming you have a date input in your form
+    $event_date = $_POST['event_date'];  
 
-    // Upload image (you'll need to implement the image upload logic)
-    $image_path = '';  // Replace this with the actual image path
+    // Handle image upload
+    $uploadDir = 'event_pictures/';
+    $uploadFile = $uploadDir . basename($_FILES['event_picture']['name']);
+
+    if (move_uploaded_file($_FILES['event_picture']['tmp_name'], $uploadFile)) {
+        echo "File is valid, and was successfully uploaded.\n";
+    } else {
+        echo "Upload failed.\n";
+    }
+
+    $image_path = $uploadFile;
 
     // Check if user_id is a valid integer
     if (!is_numeric($user_id)) {
@@ -39,15 +48,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_event'])) {
     }
 
     // Insert event data into the database
-    $insertSql = "INSERT INTO events (username, user_id, title, description, event_date, image_path) 
-                  VALUES (?, ?, ?, ?, ?, ?)";
+    $insertSql = "INSERT INTO events (username, user_id, title, description, event_date, image_path, event_picture_path) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     // Use prepared statement to prevent SQL injection
     $stmt = $conn->prepare($insertSql);
-    $stmt->bind_param("sissss", $username, $user_id, $title, $description, $event_date, $image_path);
+    $stmt->bind_param("sisssss", $username, $user_id, $title, $description, $event_date, $image_path, $event_picture_path);
 
     if ($stmt->execute()) {
-        // Event created successfully, redirect to index.php
+        // Event created successfully, redirect to events.php
         header("Location: events.php");
         exit();
     } else {
@@ -61,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_event'])) {
 // Close the database connection
 $conn->close();
 ?>
+
 <!-- Create Event Form HTML -->
 <!DOCTYPE html>
 <html lang="en">
@@ -72,7 +82,7 @@ $conn->close();
 </head>
 <body>
     <h2>Create Event</h2>
-    <form method="post" action="" enctype="multipart/form-data">
+    <form method="post" action="create_event.php" enctype="multipart/form-data">
         <label for="title">Title:</label>
         <input type="text" name="title" required><br>
 
@@ -83,6 +93,8 @@ $conn->close();
         <input type="date" name="event_date" required><br>
 
         <!-- Add an input for image upload -->
+        <label for="event_picture">Event Picture:</label>
+        <input type="file" name="event_picture">
 
         <input type="submit" name="create_event" value="Create Event">
     </form>

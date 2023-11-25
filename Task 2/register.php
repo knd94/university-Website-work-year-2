@@ -1,16 +1,18 @@
 <?php
-include('db.php');
 
-// Sample registration code
-$username = "example_user";
-$password = "example_password";
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+function registerUser($username, $password, $conn) {
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    $sql = "INSERT INTO users (username, password, hashed_password) VALUES ('$username', '$password', '$hashed_password')";
 
-$sql = "INSERT INTO users (username, password, hashed_password) VALUES ('$username', '$password', '$hashed_password')";
+    if ($conn->query($sql) === TRUE) {
+        $userId = $conn->insert_id;
 
-if ($conn->query($sql) === TRUE) {
-    echo "User registered successfully.";
-} else {
-    echo "Error registering user: " . $conn->error;
+        // Set user_id in the session after successful registration
+        $_SESSION['user_id'] = $userId;
+
+        return $userId; // Return the user ID after successful registration
+    } else {
+        return false; // Return false if registration fails
+    }
 }
 ?>

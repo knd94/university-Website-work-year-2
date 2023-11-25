@@ -1,7 +1,6 @@
 <?php
 session_start();
 include('db.php');
-include('register.php'); // Include the registration script
 
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {
@@ -9,13 +8,21 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Set user_id if it exists in the session and is a valid integer
-$user_id = (isset($_SESSION['user_id']) && is_numeric($_SESSION['user_id'])) ? $_SESSION['user_id'] : null;
+// Set username from session
+$username = $_SESSION['username'];
 
-// Initialize $stmt outside the conditional block
-$stmt = null;
+// Fetch user_id from users table based on the username
+$sql = "SELECT id FROM users WHERE username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $username);
 
-// Check if the create event form is submitted
+$stmt->execute();
+$stmt->bind_result($user_id);
+$stmt->fetch();
+
+$stmt->close();
+
+/// Check if the create event form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_event'])) {
     // Validate and process the form data
     $title = mysqli_real_escape_string($conn, $_POST['title']);
@@ -32,27 +39,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create_event'])) {
     }
 
     // Insert event data into the database
-    $insertSql = "INSERT INTO events (user_id, title, description, event_date, image_path) 
-                  VALUES (?, ?, ?, ?, ?)";
+$insertSql = "INSERT INTO events (username, title, description, event_date, image_path) 
+              VALUES (?, ?, ?, ?, ?)";
 
-    // Use prepared statement to prevent SQL injection
-    $stmt = $conn->prepare($insertSql);
-    $stmt->bind_param("issss", $user_id, $title, $description, $event_date, $image_path);
+// Use prepared statement to prevent SQL injection
+$stmt = $conn->prepare($insertSql);
+$stmt->bind_param("sssss", $username, $title, $description, $event_date, $image_path);
 
-    if ($stmt->execute()) {
-        // Event created successfully, redirect to index.php
-        header("Location: index.php");
-        exit();
-    } else {
-        echo "Error creating event: " . $stmt->error;
-    }
-
-    // Close the statement
-    $stmt->close();
+if ($stmt->execute()) {
+    // Event created successfully, redirect to index.php
+    header("Location: index.php");
+    exit();
+} else {
+    echo "Error creating event: " . $stmt->error;
+}
+// Close the statement
+$stmt->close();
 }
 
 // Close the database connection
 $conn->close();
+?>
+;
 ?>
 <!-- Create Event Form HTML -->
 <!DOCTYPE html>

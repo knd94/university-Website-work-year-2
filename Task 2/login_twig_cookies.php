@@ -4,7 +4,7 @@ session_start();
 
 // Check if the user is already logged in
 if (isset($_SESSION['username'])) {
-    header("Location: dashboard.php");
+    header("Location: index.php");
     exit;
 }
 
@@ -43,27 +43,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "SELECT * FROM users WHERE username = '$username'";
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
+    if ($result) {
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
 
-        // Check if the entered password matches the hashed password stored in the database for the given username
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['username'] = $username;
+            // Check if the entered password matches the hashed password stored in the database for the given username
+            if (password_verify($password, $row['hashed_password'])) {
+                $_SESSION['username'] = $username;
 
-            // Check if "Remember me" is checked
-            if (isset($_POST['rememberMe']) && $_POST['rememberMe'] == 'on') {
-                // Set a cookie to remember the user for 30 days
-                setcookie('rememberedUser', $username, time() + 30 * 24 * 60 * 60);
+                // Check if "Remember me" is checked
+                if (isset($_POST['rememberMe']) && $_POST['rememberMe'] == 'on') {
+                    // Set a cookie to remember the user for 30 days
+                    setcookie('rememberedUser', $username, time() + 30 * 24 * 60 * 60);
+                }
+
+                header("Location: index.php");
+                exit;
+            } else {
+                echo "Entered password: " . $password . "<br>";
+                echo "Hashed password from the database: " . $row['hashed_password'] . "<br>";
+                echo "Incorrect password. Please try again.";
             }
-
-            header("Location: dashboard.php");
-            exit;
         } else {
-            echo "Entered password: " . $password . "<br>";
-            echo "Incorrect password. Please try again.";
+            echo "User not found";
         }
     } else {
-        echo "User not found";
+        echo "Error in query: " . $conn->error;
     }
 }
 

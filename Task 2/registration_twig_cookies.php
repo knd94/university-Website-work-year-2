@@ -20,7 +20,7 @@ $loader = new \Twig\Loader\ArrayLoader([
                 </label><br>
                 <input type="submit" value="Register">
             </form>
-            <a href="login_twig.php"> Already a user? Login! </a>
+            <a href="login_twig_cookies.php"> Already a user? Login! </a>
         </body>
         </html>
     ',

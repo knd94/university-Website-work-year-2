@@ -14,6 +14,12 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+// Fetch user profile picture from the database
+$profilePicture = getUserProfilePicture($conn, $_SESSION['username']);
+
+// Fetch user events
+$userEvents = getUserEvents($conn, $_SESSION['username']);
+
 // Check if the delete form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_user'])) {
     // Include the delete_user.php script
@@ -26,9 +32,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload_picture'])) {
     include('upload_picture.php');
 }
 
-// Fetch user profile picture from the database
-$profilePicture = getUserProfilePicture($conn, $_SESSION['username']);
+// Check if the delete event form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_event'])) {
+    // Get the event ID to be deleted
+    $event_id = $_POST['event_id'];
+
+    // Delete the event
+    deleteEvent($conn, $event_id);
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,17 +54,43 @@ $profilePicture = getUserProfilePicture($conn, $_SESSION['username']);
     <h2>Welcome, <?php echo $_SESSION['username']; ?>!</h2>
 
     <!-- Display user profile picture -->
-<?php
-if (!empty($profilePicture)) {
-    echo '<img src="' . $profilePicture . '" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">';
-} else {
-    echo '<p>No profile picture found for user ' . $_SESSION['username'] . '</p>';
+    <?php
+    if (!empty($profilePicture)) {
+        echo '<img src="' . $profilePicture . '" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 50%;">';
+    } else {
+        echo '<p>No profile picture found for user ' . $_SESSION['username'] . '</p>';
+    }
+    ?>
 
-}
-?>
+    <!-- Display a list of user events -->
+    <h3>Your Events</h3>
+    <?php
+    if (!empty($userEvents)) {
+        foreach ($userEvents as $event) {
+            ?>
+            <div>
+                <!-- Display event information -->
+                <h3><?php echo $event['title']; ?></h3>
+                <p><?php echo $event['description']; ?></p>
+                <p>Date: <?php echo $event['event_date']; ?></p>
 
+                <!-- Display event picture -->
+                <img src="<?php echo $event['image_path']; ?>" alt="Event Picture" width="300">
 
-    <!-- Display a list of upcoming events -->
+                <!-- Add more styling and HTML structure as needed -->
+
+                <!-- Delete Event Form -->
+                <form method="post" action="">
+                    <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                    <input type="submit" name="delete_event" value="Delete Event">
+                </form>
+            </div>
+            <?php
+        }
+    } else {
+        echo '<p>No events found for user ' . $_SESSION['username'] . '</p>';
+    }
+    ?>
 
     <!-- Delete User Form -->
     <form method="post" action="">
@@ -68,6 +107,7 @@ if (!empty($profilePicture)) {
     <!-- Add more content and features as needed -->
 
     <a href="logout.php">Logout</a>
+    <a href="create_event.php">Create an event!</a>
 
     <!-- Include any additional scripts if needed -->
 </body>

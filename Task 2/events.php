@@ -127,15 +127,14 @@ if ($filterOption === 'registered_events' || $filterOption === 'others_events' |
             <img src="<?php echo $row['image_path']; ?>" alt="Event Picture" width="300">
 
             <!-- Registration form -->
-            <?php
-            $buttonText = getButtonText($filterOption, $row['id'], $registeredEvents);
-            ?>
-            <form method="post" action="register_event.php">
-                <input type="hidden" name="event_id" value="<?php echo $row['id']; ?>">
-                <input type="submit" name="register_event" value="<?php echo $buttonText; ?>">
-            </form>
-
-            <!-- Add more styling and HTML structure as needed -->
+<?php
+$buttonText = getButtonText($filterOption, $row['id'], $registeredEvents);
+$formAction = ($filterOption === 'your_events') ? 'edit_event.php?event_id=' . $row['id'] : 'register_event.php';
+?>
+<form method="post" action="<?php echo $formAction; ?>">
+    <input type="hidden" name="event_id" value="<?php echo $row['id']; ?>">
+    <input type="submit" name="<?php echo ($filterOption === 'your_events') ? 'edit_event' : 'register_event'; ?>" value="<?php echo $buttonText; ?>">
+</form>
         </div>
         <?php
     }

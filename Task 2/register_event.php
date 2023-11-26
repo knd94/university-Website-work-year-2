@@ -1,6 +1,5 @@
 <?php
 session_start();
-var_dump($_SESSION); // Output session variables for debugging
 
 include('db.php');
 

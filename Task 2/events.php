@@ -2,6 +2,23 @@
 session_start();
 include('db.php');
 
+// Function to get dynamic button text
+function getButtonText($filterOption, $eventId, $registeredEvents) {
+    switch ($filterOption) {
+        case 'your_events':
+            return 'Edit Event';
+
+        case 'registered_events':
+            return in_array($eventId, $registeredEvents) ? 'Unregister from Event' : 'Register for Event';
+
+        case 'others_events':
+            return in_array($eventId, $registeredEvents) ? 'Unregister from Event' : 'Register for Event';
+
+        default:
+            return in_array($eventId, $registeredEvents) ? 'Unregister from Event' : 'Register for Event';
+    }
+}
+
 // Initialize variables
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 $today = date("Y-m-d");
@@ -55,7 +72,7 @@ switch ($filterOption) {
 
 // Fetch registered events for the user
 $registeredEvents = array();
-if ($filterOption === 'registered_events') {
+if ($filterOption === 'registered_events' || $filterOption === 'others_events' || $filterOption === 'all_events') {
     $getRegisteredEventsSql = "SELECT event_id FROM event_registrations WHERE username = '$username'";
     $getRegisteredEventsResult = $conn->query($getRegisteredEventsSql);
 
@@ -110,9 +127,12 @@ if ($filterOption === 'registered_events') {
             <img src="<?php echo $row['image_path']; ?>" alt="Event Picture" width="300">
 
             <!-- Registration form -->
+            <?php
+            $buttonText = getButtonText($filterOption, $row['id'], $registeredEvents);
+            ?>
             <form method="post" action="register_event.php">
                 <input type="hidden" name="event_id" value="<?php echo $row['id']; ?>">
-                <input type="submit" name="register_event" value="<?php echo (in_array($row['id'], $registeredEvents)) ? 'Unregister from Event' : 'Register for Event'; ?>">
+                <input type="submit" name="register_event" value="<?php echo $buttonText; ?>">
             </form>
 
             <!-- Add more styling and HTML structure as needed -->

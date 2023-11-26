@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['register_event'])) {
                 if ($checkResult) {
                     if ($checkResult->num_rows == 0) {
                         // If not registered, insert into the event_registrations table
-                        $insertSql = "INSERT INTO event_registrations (event_id, user_id) VALUES ($event_id, $user_id)";
+                        $insertSql = "INSERT INTO event_registrations (event_id, user_id, username) VALUES ($event_id, $user_id, '$username')";
                         if ($conn->query($insertSql)) {
                             echo "Successfully registered for the event!";
                         } else {

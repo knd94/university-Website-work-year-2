@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Check if "Remember Me" is checked
             if (isset($_POST['remember_me']) && $_POST['remember_me'] == 'on') {
-                // Set a persistent cookie for "Remember Me"
+                // Set a persistent cookie for "Remember Me" (Don't know why but...)
                 setcookie('remembered_user', $username, time() + (30 * 24 * 60 * 60), '/');
             }
         } else {

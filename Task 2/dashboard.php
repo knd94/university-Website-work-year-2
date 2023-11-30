@@ -82,10 +82,9 @@ $userFriends = getUserFriends($conn, $_SESSION['user_id']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <!-- Include any additional stylesheets or scripts if needed -->
 </head>
 <body>
-    <h2>Welcome, <?php echo $_SESSION['username']; ?>!</h2>
+    <h2>Welcome, <?php echo $_SESSION['username']; ?> to the dashboard!</h2>
 
     <!-- Display user profile picture -->
     <?php
@@ -146,7 +145,6 @@ $userFriends = getUserFriends($conn, $_SESSION['user_id']);
                 <!-- Display event picture -->
                 <img src="<?php echo $event['image_path']; ?>" alt="Event Picture" width="300">
 
-                <!-- Add more styling and HTML structure as needed -->
 
                 <!-- Delete Event Form -->
                 <form method="post" action="">
@@ -174,7 +172,6 @@ $userFriends = getUserFriends($conn, $_SESSION['user_id']);
     }
     ?>
 
-<!-- Display a list of user's friends with links to chat rooms -->
 <h3>Your Friends</h3>
 <?php
 if (!empty($userFriends)) {
@@ -200,11 +197,8 @@ if (!empty($userFriends)) {
         <input type="submit" name="upload_picture" value="Upload Picture">
     </form>
 
-    <!-- Add more content and features as needed -->
-
     <a href="logout.php">Logout</a>
     <a href="create_event.php">Create an event!</a>
 
-    <!-- Include any additional scripts if needed -->
 </body>
 </html>

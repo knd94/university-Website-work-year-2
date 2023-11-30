@@ -46,7 +46,6 @@ $pageTitle = "Chatting with $friendUsername";
 
 // Display chat messages and update the title
 echo "<h2>$pageTitle</h2>";
-
 foreach ($chatMessages as $message) {
     echo '<p>' . $message['username'] . ': ' . $message['message'] . '</p>';
 }

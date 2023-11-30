@@ -19,10 +19,7 @@ if (!isset($_SESSION['username'])) {
 
 // Function to get chat messages for a specific chat room
 function getChatMessages($conn, $chatRoomId) {
-    // Placeholder logic to fetch chat messages from the database
-    // Implement your database query here and return the chat messages
-
-    // Example query to retrieve messages from the chat_messages table
+// Query to retrieve messages from the chat_messages table
     $sql = "SELECT username, message FROM chat_messages
             JOIN users ON chat_messages.user_id = users.id
             WHERE chat_messages.chat_room_id = ?";
@@ -47,23 +44,12 @@ foreach ($chatMessages as $message) {
 
 // Function to insert a new chat message into the database
 function insertChatMessage($conn, $chatRoomId, $userId, $message) {
-    // Placeholder logic to insert a new chat message into the database
-    // Implement your database query here
-
-    // Example query using prepared statement
+// Query using prepared statement
     $insertSql = "INSERT INTO chat_messages (chat_room_id, user_id, message) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($insertSql);
     $stmt->bind_param("iis", $chatRoomId, $userId, $message);
     $stmt->execute();
     $stmt->close();
-}
-
-// Retrieve chat messages for the current chat room
-$chatMessages = getChatMessages($conn, $chatRoomId);
-
-// Display chat messages
-foreach ($chatMessages as $message) {
-    echo '<p>' . $message['username'] . ': ' . $message['message'] . '</p>';
 }
 
 // Form to submit new messages
@@ -86,6 +72,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
     header("Location: chat_room.php?chat_room_id=" . $chatRoomId);
     exit();
 }
-
-// Include any additional scripts or styling as needed
 ?>

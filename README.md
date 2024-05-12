@@ -1,1 +1,1 @@
-This is my second year project of a website module. 
+This is my second year project of a website module. The final product is an Events php webpage. I created it within, about, 2-5 weeks. Some of the functions don't work, such as the Profile Pictures changer. I tried my best to combat it, howe, it wouldn't work in the end. Luckily though, I passed with 37/40. My final grade for this product was 81%. 
